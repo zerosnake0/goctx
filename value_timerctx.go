@@ -21,22 +21,26 @@ func timerCtxFunc(ctx context.Context, key interface{}) (value interface{}, pare
 	return nil, (*timerCtx)((*gounsafe.Iface)(unsafe.Pointer(&ctx)).Data).Context
 }
 
-func init() {
-	ctx, cancel := context.WithTimeout(context.TODO(), time.Second)
-	cancel()
-
-	typ := reflect.TypeOf(ctx)
+func checkTimerCtx(o interface{}) bool {
+	if o == nil {
+		return false
+	}
+	typ := reflect.TypeOf(o)
 	if typ.Kind() != reflect.Ptr {
-		return
+		return false
 	}
 	typ = typ.Elem()
 	if typ.String() != "context.timerCtx" {
-		return
+		return false
 	}
-	if !checkCancelContextField(typ, "cancelCtx", 0) {
-		return
-	}
+	return checkCancelContextField(typ, "cancelCtx", 0)
+}
 
-	RegisterValueFunc(ctx, timerCtxFunc)
-	timerCtxRtype = (*gounsafe.Iface)(unsafe.Pointer(&ctx)).Itab.RType
+func init() {
+	ctx, cancel := context.WithTimeout(context.TODO(), time.Second)
+	cancel()
+	if checkTimerCtx(ctx) {
+		RegisterValueFunc(ctx, timerCtxFunc)
+		timerCtxRtype = (*gounsafe.Iface)(unsafe.Pointer(&ctx)).Itab.RType
+	}
 }

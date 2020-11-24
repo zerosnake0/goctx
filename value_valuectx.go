@@ -26,28 +26,28 @@ func valueCtxFunc(ctx context.Context, key interface{}) (value interface{}, pare
 	return nil, ptr.Context
 }
 
-func init() {
-	ctx := context.WithValue(context.TODO(), valueCtx{}, "")
-
-	typ := reflect.TypeOf(ctx)
+func checkValueCtx(o interface{}) bool {
+	if o == nil {
+		return false
+	}
+	typ := reflect.TypeOf(o)
 	if typ.Kind() != reflect.Ptr {
-		return
+		return false
 	}
 	typ = typ.Elem()
 	if typ.String() != "context.valueCtx" {
-		return
-	}
-	if !checkContextField(typ, "Context", 0) {
-		return
+		return false
 	}
 	ourType := reflect.TypeOf(valueCtx{})
-	if !checkInterfaceField(typ, "key", ourType.Field(1).Offset) {
-		return
-	}
-	if !checkInterfaceField(typ, "val", ourType.Field(2).Offset) {
-		return
-	}
+	return checkInterfaceField(typ, "key", ourType.Field(1).Offset) &&
+		checkInterfaceField(typ, "val", ourType.Field(2).Offset) &&
+		checkContextField(typ, "Context", 0)
+}
 
-	RegisterValueFunc(ctx, valueCtxFunc)
-	valueCtxRtype = (*gounsafe.Iface)(unsafe.Pointer(&ctx)).Itab.RType
+func init() {
+	ctx := context.WithValue(context.TODO(), valueCtx{}, "")
+	if checkValueCtx(ctx) {
+		RegisterValueFunc(ctx, valueCtxFunc)
+		valueCtxRtype = (*gounsafe.Iface)(unsafe.Pointer(&ctx)).Itab.RType
+	}
 }

@@ -17,3 +17,16 @@ func Test_cancelCtxFunc(t *testing.T) {
 	require.Equal(t, nil, gotV)
 	require.Equal(t, context.TODO(), parent)
 }
+
+func Test_checkCancelCtx(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		require.False(t, checkCancelCtx(nil))
+	})
+	t.Run("wrong kind", func(t *testing.T) {
+		require.False(t, checkCancelCtx(0))
+	})
+	t.Run("wrong type name", func(t *testing.T) {
+		type cancelCtx struct{}
+		require.False(t, checkCancelCtx(&cancelCtx{}))
+	})
+}

@@ -16,3 +16,16 @@ func Test_emptyCtxFunc(t *testing.T) {
 	require.Equal(t, nil, gotV)
 	require.Equal(t, nil, parent)
 }
+
+func Test_checkEmptyCtx(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		require.False(t, checkEmptyCtx(nil))
+	})
+	t.Run("wrong kind", func(t *testing.T) {
+		require.False(t, checkEmptyCtx(0))
+	})
+	t.Run("wrong type name", func(t *testing.T) {
+		type emptyCtx struct{}
+		require.False(t, checkEmptyCtx(&emptyCtx{}))
+	})
+}

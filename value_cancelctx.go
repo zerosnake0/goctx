@@ -20,22 +20,26 @@ func cancelCtxFunc(ctx context.Context, key interface{}) (value interface{}, par
 	return nil, (*cancelCtx)((*gounsafe.Iface)(unsafe.Pointer(&ctx)).Data).Context
 }
 
-func init() {
-	ctx, cancel := context.WithCancel(context.TODO())
-	cancel()
-
-	typ := reflect.TypeOf(ctx)
+func checkCancelCtx(o interface{}) bool {
+	if o == nil {
+		return false
+	}
+	typ := reflect.TypeOf(o)
 	if typ.Kind() != reflect.Ptr {
-		return
+		return false
 	}
 	typ = typ.Elem()
 	if typ.String() != "context.cancelCtx" {
-		return
+		return false
 	}
-	if !checkContextField(typ, "Context", 0) {
-		return
-	}
-	RegisterValueFunc(ctx, cancelCtxFunc)
-	cancelCtxRtype = (*gounsafe.Iface)(unsafe.Pointer(&ctx)).Itab.RType
+	return checkContextField(typ, "Context", 0)
+}
 
+func init() {
+	ctx, cancel := context.WithCancel(context.TODO())
+	cancel()
+	if checkCancelCtx(ctx) {
+		RegisterValueFunc(ctx, cancelCtxFunc)
+		cancelCtxRtype = (*gounsafe.Iface)(unsafe.Pointer(&ctx)).Itab.RType
+	}
 }

@@ -16,18 +16,22 @@ func emptyCtxFunc(ctx context.Context, key interface{}) (value interface{}, pare
 	return nil, nil
 }
 
-func init() {
-	ctx := context.TODO()
-
-	typ := reflect.TypeOf(ctx)
+func checkEmptyCtx(o interface{}) bool {
+	if o == nil {
+		return false
+	}
+	typ := reflect.TypeOf(o)
 	if typ.Kind() != reflect.Ptr {
-		return
+		return false
 	}
 	typ = typ.Elem()
-	if typ.String() != "context.emptyCtx" {
-		return
-	}
+	return typ.String() == "context.emptyCtx"
+}
 
-	RegisterValueFunc(ctx, emptyCtxFunc)
-	emptyCtxRtype = (*gounsafe.Iface)(unsafe.Pointer(&ctx)).Itab.RType
+func init() {
+	ctx := context.TODO()
+	if checkEmptyCtx(ctx) {
+		RegisterValueFunc(ctx, emptyCtxFunc)
+		emptyCtxRtype = (*gounsafe.Iface)(unsafe.Pointer(&ctx)).Itab.RType
+	}
 }
