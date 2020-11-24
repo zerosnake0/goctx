@@ -8,7 +8,7 @@ on:
     branches:
       - main
   schedule:
-    - cron: '0 12 * * *'
+    - cron: '0 12 * * 1'
 jobs:
   test:
     strategy:
@@ -27,7 +27,7 @@ jobs:
         uses: actions/checkout@v1
 
       - name: Test
-        run: go test -race -coverprofile=coverage.txt -covermode=atomic
+        run: go test -race -coverprofile=coverage.txt -covermode=atomic ./...
 
       - name: CodeCov
         run: bash <(curl -s https://codecov.io/bash)
