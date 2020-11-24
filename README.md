@@ -1,10 +1,12 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/zerosnake0/goctx)](https://goreportcard.com/report/github.com/zerosnake0/goctx)
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/zerosnake0/goctx)](https://pkg.go.dev/github.com/zerosnake0/goctx)
+[![Github Workflow](https://github.com/zerosnake0/goctx/workflows/Test/badge.svg)](https://github.com/zerosnake0/goctx/actions?query=workflow%3ATest)
 [![Build Status](https://travis-ci.org/zerosnake0/goctx.svg?branch=main)](https://travis-ci.org/zerosnake0/goctx)
 [![codecov](https://codecov.io/gh/zerosnake0/goctx/branch/main/graph/badge.svg)](https://codecov.io/gh/zerosnake0/goctx)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 
 # goctx
+
 Get your context value faster
 
 ## How to use
